@@ -21,10 +21,12 @@ class BoidMover(Thread):
             
             time.sleep(0.2)
 
-            self.boid.bounce_wall()
+            self.boid.limitSpeed()
+            self.boid.bounceWall()
             
-            self.boid.change_velocity(self.boids, 0.1, 0.1, 0.1)
+            #self.boid.changeVelocity(self.boids, 0.1, 0.1, 0.1)
 
             self.boid.moveBy(self.boid.velocity.x(), self.boid.velocity.y())
+            #self.boid.moveBy(5, 5)
             
             

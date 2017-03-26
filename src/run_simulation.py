@@ -17,7 +17,6 @@ class BoidsSimulation(QMainWindow):
         super(BoidsSimulation, self).__init__()
         
         self.setWindowTitle('Parvisimulaatio')
-        #self.boids_numer = boids_number
         
         self.form = SimulationLayout(boids_number)
         
@@ -32,6 +31,7 @@ class BoidsSimulation(QMainWindow):
     def move_boids(self):
         
         boids = self.form.boids
+        
         for boid in boids:
             thread = BoidMover(boid, boids)
             thread.start()
