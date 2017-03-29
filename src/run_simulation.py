@@ -7,8 +7,8 @@ Created on Mar 16, 2017
 from layout import SimulationLayout
 from start_slider import Slider
 from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QApplication
-from move_boids import BoidMover
-import sys
+from PyQt5.QtCore import QObject, QThread
+import sys, time
 
 class BoidsSimulation(QMainWindow):
     
@@ -16,7 +16,8 @@ class BoidsSimulation(QMainWindow):
         
         super(BoidsSimulation, self).__init__()
         
-        self.setWindowTitle('Parvisimulaatio')
+        self.setWindowTitle('Boids Simulation')
+        self.setGeometry(100, 100, 1200, 1100)
         
         self.form = SimulationLayout(boids_number)
         
@@ -26,15 +27,31 @@ class BoidsSimulation(QMainWindow):
         
         self.setCentralWidget(widget)
         
-        self.resize(1200, 1200)
-        
-    def move_boids(self):
+    def moveBoids(self):
         
         boids = self.form.boids
         
         for boid in boids:
-            thread = BoidMover(boid, boids)
+            boid_object = BoidRunner(boid)
+            thread = QThread()
+            boid_object.moveToThread(thread)
+            #self.form.startbtn.clicked.connect(thread.start)
+            thread.started.connect(boid_object.keep_running)
             thread.start()
+            print(thread.isRunning())
+
+            
+class BoidRunner(QObject):
+    
+    def __init__(self, boid):
+        super(BoidRunner, self).__init__()
+        self.boid = boid
+        
+    def keep_running(self):
+        
+        while True:
+            time.sleep(0.2)
+            self.boid.moveBy(5, 5)
             
             
 def main():
@@ -46,9 +63,9 @@ def main():
     
     app2 = QApplication(sys.argv)
     simulation = BoidsSimulation(slider_window.boids_number) 
-    simulation.move_boids()  
+    simulation.moveBoids()
     simulation.show()
-    app2.exec_()   
+    app2.exec_()
     
         
 if __name__ == '__main__':

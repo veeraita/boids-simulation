@@ -7,13 +7,13 @@ import random
 from PyQt5.QtGui import QVector2D, QBrush
 from PyQt5.Qt import QGraphicsEllipseItem
 
-MAX_SPEED = 30.0
+MAX_SPEED = 20.0
 RADIUS = 50.0 #yksilon havaintoetaisyys
-BOID_RADIUS = 7.0 #maarittaa pisteen koon
-WALL_MARGIN = 10
+BOID_RADIUS = 5.0 #maarittaa pisteen koon
+WALL_MARGIN = 70
 WALL_FORCE = 5.0
-SCREEN_WIDTH = 700.0
-SCREEN_HEIGHT = 700.0
+SCENE_WIDTH = 900.0
+SCENE_HEIGHT = 800.0
 
 class Boid(QGraphicsEllipseItem):
     '''
@@ -26,42 +26,38 @@ class Boid(QGraphicsEllipseItem):
         '''
         super(Boid, self).__init__()
         
-        self.xcoord = random.uniform(0.0, SCREEN_WIDTH)
-        self.ycoord = random.uniform(0.0, SCREEN_HEIGHT)
-        self.setPos(self.xcoord, self.ycoord)
-        self.position = QVector2D(self.pos())
+        self.xcoord = random.uniform(50, SCENE_WIDTH-50)
+        self.ycoord = random.uniform(50, SCENE_HEIGHT-50)
         
-        self.speed = random.uniform(10, MAX_SPEED)
+        self.speed = random.uniform(5, MAX_SPEED)
         self.velocity = QVector2D(random.uniform(-1,1),random.uniform(-1,1))*self.speed
+        self.pos_vector = QVector2D(self.xcoord,self.ycoord)
+       
+    def setGraphics(self):
         
-        self._setGraphics(self.xcoord, self.ycoord)
-        
-    def _setGraphics(self, x, y):
-        
-        left = self.xcoord - BOID_RADIUS
-        top = self.ycoord + BOID_RADIUS
         width = 2*BOID_RADIUS
         height = 2*BOID_RADIUS
         
-        self.setRect(left, top, width, height)
+        self.setRect(0, 0, width, height)
+        self.setPos(self.xcoord, self.ycoord)
         
         brush = QBrush(1)
         self.setBrush(brush)
-        
+    
     def getDistance(self, other_boid):
         # Etaisyys toiseen lintuun
-        d_vector = other_boid.position - self.position
+        d_vector = other_boid.pos_vector - self.pos_vector
         return d_vector.length()
         
     def bounceWall(self):
         # Valta alueen reunoja
-        if self.scenePos().x() < WALL_MARGIN:
+        if self.x() < WALL_MARGIN:
             self.velocity.setX(self.velocity.x() + WALL_FORCE)
-        elif self.scenePos().x() > SCREEN_WIDTH - WALL_MARGIN:
+        elif self.x() > SCENE_WIDTH - WALL_MARGIN:
             self.velocity.setX(self.velocity.x() - WALL_FORCE)
-        if self.scenePos().y() < WALL_MARGIN:
+        if self.y() < WALL_MARGIN:
             self.velocity.setY(self.velocity.y() + WALL_FORCE)
-        elif self.scenePos().y() > SCREEN_HEIGHT - WALL_MARGIN:
+        elif self.y() > SCENE_HEIGHT - WALL_MARGIN:
             self.velocity.setY(self.velocity.y() - WALL_FORCE)
             
     def limitSpeed(self):
@@ -86,7 +82,11 @@ class Boid(QGraphicsEllipseItem):
         v1 = self.separation(boids)
         v2 = self.alignment(boids)
         v3 = self.cohesion(boids)
-        self.change = v1 + v2 + v3
+        change = v1 + v2 + v3
+        return change
     
-    def move(self):
-        pass
+    def move(self, boids):
+        #change = self.changeVelocity(boids)
+        self.bounceWall()
+        self.limitSpeed()
+        self.moveBy(self.velocity.x(), self.velocity.y())
