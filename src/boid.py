@@ -66,16 +66,69 @@ class Boid(QGraphicsEllipseItem):
             self.velocity = self.velocity.normalized() * MAX_SPEED
     
     def separation(self, boids):
-        # Valta tormailya muihin lintuihin    
-        pass
+        # Valta tormailya muihin lintuihin
+        
+        separation_vector = QVector2D()
+        
+        for boid in boids:
+            
+            if boid is not self:
+                
+                dist = self.getDistance(boid)
+                if dist < RADIUS and dist > 0:
+                    
+                    force = (self.pos_vector - boid.pos_vector)
+                    #print(force)
+                    force /= (dist ** 2)
+                    
+                    separation_vector += force
+        #print(separation_vector)
+                    
+        return separation_vector
     
     def alignment(self, boids):
         # Lenna samaa nopeutta kuin muu parvi keskimaarin    
-        pass
+        #lenna samaa nopeutta kuin muu parvi keskimaarin
+        #lasketaan lahella olevien lintujen keskimaarainen nopeus
+        avg_vel = QVector2D()
+        
+        for boid in boids:
+            
+            if boid is not self:
+                dist = self.getDistance(boid)
+                
+                if dist < RADIUS and dist > 0:                
+                    avg_vel += boid.velocity
+                    
+        alignment_vector = avg_vel
+        #print(alignment_vector)
+        
+        return alignment_vector
     
     def cohesion(self, boids):
         # Pyri kohti parven keskipistetta 
-        pass
+        
+        avg_x = 0
+        avg_y = 0
+        # Lasketaan parven "massakeskipiste"
+        for boid in boids:
+            
+            if boid is not self:
+                
+                if self.distance(boid) < RADIUS:
+                    
+                    avg_x += (self.x() - boid.x())
+                    avg_y += (self.y() - boid.y())
+        
+        avg_x /= len(boids)
+        avg_y /= len(boids)
+        
+        avg_position = QVector2D(avg_x, avg_y)
+        
+        cohesion_vector = (avg_position - self.pos_vector)
+        #print(cohesion_vector)
+        
+        return cohesion_vector
     
     def changeVelocity(self, boids):
         # Muodosta linnun nopeutta muuttava vektori    
@@ -83,10 +136,12 @@ class Boid(QGraphicsEllipseItem):
         v2 = self.alignment(boids)
         v3 = self.cohesion(boids)
         change = v1 + v2 + v3
-        return change
+        self.velocity += change
     
     def move(self, boids):
-        #change = self.changeVelocity(boids)
+        #self.velocity += self.changeVelocity(boids)
         self.bounceWall()
         self.limitSpeed()
-        self.moveBy(self.velocity.x(), self.velocity.y())
+        #self.moveBy(self.velocity.x(), self.velocity.y())
+        self.moveBy(5, 5)
+        

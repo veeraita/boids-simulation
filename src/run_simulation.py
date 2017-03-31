@@ -3,12 +3,14 @@ Created on Mar 16, 2017
 
 @author: Veera
 '''
+import sys
+import time
 
 from layout import SimulationLayout
 from start_slider import Slider
+from move_thread import MoveThread
 from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QApplication
-from PyQt5.QtCore import QObject, QThread
-import sys, time
+from PyQt5.QtCore import QObject, QThread, pyqtSignal
 
 class BoidsSimulation(QMainWindow):
     
@@ -30,28 +32,41 @@ class BoidsSimulation(QMainWindow):
     def moveBoids(self):
         
         boids = self.form.boids
-        
+        '''
         for boid in boids:
-            boid_object = BoidRunner(boid)
+            #boid_object = BoidRunner(boid, boids)
             thread = QThread()
-            boid_object.moveToThread(thread)
+            #boid_object.moveToThread(thread)
             #self.form.startbtn.clicked.connect(thread.start)
-            thread.started.connect(boid_object.keep_running)
+            #thread.started.connect(boid_object.keep_running)
+            #boid_object.temp_velocity.connect(boid.move)
             thread.start()
-            print(thread.isRunning())
+        '''
+        '''
+        for boid in boids:
+            thread = MoveThread(boid, boids)
+            thread.temp_velocity.connect(boid.move)
+            thread.start()
+        '''  
 
-            
 class BoidRunner(QObject):
     
-    def __init__(self, boid):
+    temp_velocity = pyqtSignal(object)
+    
+    def __init__(self, boid, boids):
         super(BoidRunner, self).__init__()
         self.boid = boid
+        self.boids = boids
         
     def keep_running(self):
         
-        while True:
-            time.sleep(0.2)
-            self.boid.moveBy(5, 5)
+        while True:        
+            '''
+            Laske muutos
+            '''
+            time.sleep(1)
+            #self.boid.change_velocity(self.boids)
+            #self.temp_velocity.emit(temp)
             
             
 def main():
@@ -63,8 +78,16 @@ def main():
     
     app2 = QApplication(sys.argv)
     simulation = BoidsSimulation(slider_window.boids_number) 
-    simulation.moveBoids()
     simulation.show()
+    #simulation.moveBoids()
+    boids = simulation.form.boids
+    for boid in boids:
+        thread = QThread()
+        boid_object = BoidRunner(boid, boids)
+        boid_object.moveToThread(thread)
+        thread.started.connect(boid_object.keep_running)
+        boid_object.temp_velocity.connect(boid.move)
+        thread.start()
     app2.exec_()
     
         
