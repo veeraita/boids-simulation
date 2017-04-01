@@ -64,6 +64,6 @@ class SimulationLayout(QWidget):
         for boid in self.boids:
             scene.addItem(boid)
             boid.setGraphics()
-            print(boid.pos())
+            boid.updatePosVector()
 
         return scene

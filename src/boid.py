@@ -4,6 +4,8 @@ Created on Mar 16, 2017
 @author: Veera
 '''
 import random
+import time
+
 from PyQt5.QtGui import QVector2D, QBrush
 from PyQt5.Qt import QGraphicsEllipseItem
 
@@ -31,7 +33,7 @@ class Boid(QGraphicsEllipseItem):
         
         self.speed = random.uniform(5, MAX_SPEED)
         self.velocity = QVector2D(random.uniform(-1,1),random.uniform(-1,1))*self.speed
-        self.pos_vector = QVector2D(self.xcoord,self.ycoord)
+        #self.updatePosVector()
        
     def setGraphics(self):
         
@@ -43,6 +45,10 @@ class Boid(QGraphicsEllipseItem):
         
         brush = QBrush(1)
         self.setBrush(brush)
+        
+    def updatePosVector(self):
+        self.pos_vector = QVector2D(self.x(), self.y())
+        print(self.pos_vector)
     
     def getDistance(self, other_boid):
         # Etaisyys toiseen lintuun
@@ -78,11 +84,10 @@ class Boid(QGraphicsEllipseItem):
                 if dist < RADIUS and dist > 0:
                     
                     force = (self.pos_vector - boid.pos_vector)
-                    #print(force)
+                    
                     force /= (dist ** 2)
                     
                     separation_vector += force
-        #print(separation_vector)
                     
         return separation_vector
     
@@ -99,49 +104,43 @@ class Boid(QGraphicsEllipseItem):
                 
                 if dist < RADIUS and dist > 0:                
                     avg_vel += boid.velocity
-                    
-        alignment_vector = avg_vel
-        #print(alignment_vector)
         
-        return alignment_vector
+        return avg_vel
     
     def cohesion(self, boids):
         # Pyri kohti parven keskipistetta 
         
-        avg_x = 0
-        avg_y = 0
+        avg_position = QVector2D()
         # Lasketaan parven "massakeskipiste"
         for boid in boids:
             
             if boid is not self:
                 
-                if self.distance(boid) < RADIUS:
-                    
-                    avg_x += (self.x() - boid.x())
-                    avg_y += (self.y() - boid.y())
+                avg_position += boid.pos_vector
         
-        avg_x /= len(boids)
-        avg_y /= len(boids)
+        avg_position /= (len(boids) -1)
         
-        avg_position = QVector2D(avg_x, avg_y)
-        
-        cohesion_vector = (avg_position - self.pos_vector)
-        #print(cohesion_vector)
-        
-        return cohesion_vector
+        return (avg_position - self.pos_vector)
     
     def changeVelocity(self, boids):
-        # Muodosta linnun nopeutta muuttava vektori    
-        v1 = self.separation(boids)
-        v2 = self.alignment(boids)
-        v3 = self.cohesion(boids)
-        change = v1 + v2 + v3
-        self.velocity += change
+        # Muodosta linnun nopeutta muuttava vektori 
+        while True:   
+            time.sleep(1)
+            #print(self.velocity)
+            v1 = self.separation(boids)
+            v2 = self.alignment(boids)
+            v3 = self.cohesion(boids)
+            #print("v1 = ", v1)
+            #print("v2 = ", v2)
+            print("v3 = ", v3)
+            change = v1 + v2 + v3
+            self.velocity += change
+            self.bounceWall()
+            self.limitSpeed()
     
-    def move(self, boids):
-        #self.velocity += self.changeVelocity(boids)
-        self.bounceWall()
-        self.limitSpeed()
-        #self.moveBy(self.velocity.x(), self.velocity.y())
-        self.moveBy(5, 5)
-        
+    def move(self):
+        while True:
+            time.sleep(1)
+
+            self.moveBy(self.velocity.x(), self.velocity.y())
+            self.updatePosVector()
