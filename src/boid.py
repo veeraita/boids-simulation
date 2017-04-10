@@ -9,13 +9,17 @@ import time
 from PyQt5.QtGui import QVector2D, QBrush
 from PyQt5.Qt import QGraphicsEllipseItem
 
-MAX_SPEED = 20.0
-RADIUS = 50.0 #yksilon havaintoetaisyys
+MAX_SPEED = 15.0
+RADIUS = 100.0 #yksilon havaintoetaisyys
 BOID_RADIUS = 5.0 #maarittaa pisteen koon
 WALL_MARGIN = 70
-WALL_FORCE = 5.0
+WALL_FORCE = 200.0
 SCENE_WIDTH = 900.0
 SCENE_HEIGHT = 800.0
+
+W_S = 0.00005
+W_A = 20
+W_C = 0.35
 
 class Boid(QGraphicsEllipseItem):
     '''
@@ -48,10 +52,11 @@ class Boid(QGraphicsEllipseItem):
         
     def updatePosVector(self):
         self.pos_vector = QVector2D(self.x(), self.y())
-        print(self.pos_vector)
     
     def getDistance(self, other_boid):
         # Etaisyys toiseen lintuun
+        self.updatePosVector()
+        other_boid.updatePosVector()
         d_vector = other_boid.pos_vector - self.pos_vector
         return d_vector.length()
         
@@ -81,13 +86,9 @@ class Boid(QGraphicsEllipseItem):
             if boid is not self:
                 
                 dist = self.getDistance(boid)
-                if dist < RADIUS and dist > 0:
+                if dist < RADIUS:
                     
-                    force = (self.pos_vector - boid.pos_vector)
-                    
-                    force /= (dist ** 2)
-                    
-                    separation_vector += force
+                    separation_vector += ((self.pos_vector - boid.pos_vector)*(dist**2))
                     
         return separation_vector
     
@@ -100,10 +101,10 @@ class Boid(QGraphicsEllipseItem):
         for boid in boids:
             
             if boid is not self:
-                dist = self.getDistance(boid)
-                
-                if dist < RADIUS and dist > 0:                
+                               
                     avg_vel += boid.velocity
+        
+        avg_vel /= (len(boids)-1)
         
         return avg_vel
     
@@ -118,29 +119,24 @@ class Boid(QGraphicsEllipseItem):
                 
                 avg_position += boid.pos_vector
         
-        avg_position /= (len(boids) -1)
+        avg_position /= (len(boids)-1)
         
         return (avg_position - self.pos_vector)
     
     def changeVelocity(self, boids):
         # Muodosta linnun nopeutta muuttava vektori 
         while True:   
-            time.sleep(1)
+            time.sleep(0.2)
             #print(self.velocity)
             v1 = self.separation(boids)
             v2 = self.alignment(boids)
             v3 = self.cohesion(boids)
             #print("v1 = ", v1)
             #print("v2 = ", v2)
-            print("v3 = ", v3)
-            change = v1 + v2 + v3
+            #print("v3 = ", v3)
+            change = v1*W_S + v2*W_A + v3*W_C
             self.velocity += change
             self.bounceWall()
             self.limitSpeed()
+            
     
-    def move(self):
-        while True:
-            time.sleep(1)
-
-            self.moveBy(self.velocity.x(), self.velocity.y())
-            self.updatePosVector()

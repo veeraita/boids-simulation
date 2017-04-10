@@ -17,7 +17,7 @@ class Slider(QWidget):
         btn = QPushButton('Done', self)
         btn.clicked.connect(self.buttonClicked)
         
-        self.sld.setMaximum(30)
+        self.sld.setMaximum(70)
         
         layout = QVBoxLayout()
         layout.addWidget(lcd)
