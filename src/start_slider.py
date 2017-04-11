@@ -17,7 +17,8 @@ class Slider(QWidget):
         btn = QPushButton('Done', self)
         btn.clicked.connect(self.buttonClicked)
         
-        self.sld.setMaximum(70)
+        self.sld.valueChanged.connect(lcd.display)
+        self.sld.setRange(5, 70)
         
         layout = QVBoxLayout()
         layout.addWidget(lcd)
@@ -25,7 +26,6 @@ class Slider(QWidget):
         layout.addWidget(btn)
 
         self.setLayout(layout)
-        self.sld.valueChanged.connect(lcd.display)
         
         self.setGeometry(800, 500, 800, 300)
         self.setWindowTitle('Determine the number of boids.')
@@ -34,3 +34,4 @@ class Slider(QWidget):
         
         self.boids_number = self.sld.value()
         self.close()
+        

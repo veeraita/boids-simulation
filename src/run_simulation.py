@@ -31,14 +31,14 @@ class BoidsSimulation(QMainWindow):
     def moveBoids(self):
         
         while True:
-            time.sleep(0.2)
+            time.sleep(0.1)
             QApplication.processEvents()
+            
             for boid in self.form.boids:
                 boid.moveBy(boid.velocity.x(), boid.velocity.y())
                 boid.updatePosVector()
                 
-      
-            
+                 
 def main():
     
     app1 = QApplication(sys.argv)
@@ -55,13 +55,14 @@ def main():
     # Kaynnista saikeet lintujen nopeuden muutoksen laskemiseksi
     for boid in boids:
         thread = Thread(target=boid.changeVelocity, args=(boids,))
+        thread.daemon = True
         thread.start()
-        
+    
     simulation.moveBoids() # Linnut lentamaan
-     
+    
     app2.exec_()
     
-        
+    
 if __name__ == '__main__':
     
     sys.exit(main())

@@ -3,12 +3,11 @@ Created on Mar 16, 2017
 
 @author: Veera
 '''
-from boid import Boid, SCENE_WIDTH, SCENE_HEIGHT, BOID_RADIUS
+from boid import *
 from weightslider import WeightSlider
 from start_slider import Slider
-from PyQt5.QtWidgets import QWidget, QGraphicsScene, QGraphicsView, QHBoxLayout, QVBoxLayout, QLabel, QPushButton
+from PyQt5.QtWidgets import QWidget, QGraphicsScene, QGraphicsView, QHBoxLayout, QVBoxLayout, QLabel
 from PyQt5.Qt import Qt, QGraphicsRectItem
-import random
 
 class SimulationLayout(QWidget):
 
@@ -23,18 +22,26 @@ class SimulationLayout(QWidget):
             self.boids.append(Boid())
         self.__layout()
         
+        self.ws = DEFAULT_S
+        self.wa = DEFAULT_A
+        self.wc = DEFAULT_C
+        
         
     def __layout(self):
         
-        self.sld1 = WeightSlider('Separation')
-        self.sld2 = WeightSlider('Alignment')
-        self.sld3 = WeightSlider('Cohesion')
+        self.sld1 = WeightSlider('Separation', DEFAULT_S, RANGE_S)
+        self.sld1.slider.valueChanged.connect(lambda: get_ws(self.sld1.slider.value()))
         
-        self.startbtn = QPushButton("Start")
+        self.sld2 = WeightSlider('Alignment', DEFAULT_A, RANGE_A)
+        self.sld2.slider.valueChanged.connect(lambda: get_wa(self.sld2.slider.value()))
+        
+        self.sld3 = WeightSlider('Cohesion', DEFAULT_C, RANGE_C)
+        self.sld3.slider.valueChanged.connect(lambda: get_wc(self.sld3.slider.value()))
         
         scene = self.setScene()
         self.view = QGraphicsView(scene)
         self.view.adjustSize()
+        
         # Estetaan scroll barit
         self.view.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.view.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
@@ -44,14 +51,13 @@ class SimulationLayout(QWidget):
         self.horizontal2 = QHBoxLayout()
         
         self.horizontal1.addWidget(self.view)
-        self.horizontal1.addWidget(self.startbtn)
         self.vertical.addLayout(self.horizontal1)
         # Lisataan ikkunaan graphicsviewin alapuolelle kolme painokerroin-slideria
         self.horizontal2.addWidget(self.sld1)
         self.horizontal2.addWidget(self.sld2)
         self.horizontal2.addWidget(self.sld3)
         
-        self.vertical.addWidget(QLabel('Muokkaa painokertoimia'))
+        self.vertical.addWidget(QLabel('Adjust parameters'))
         self.vertical.addLayout(self.horizontal2)
         
         self.setLayout(self.vertical)
@@ -67,3 +73,7 @@ class SimulationLayout(QWidget):
             boid.updatePosVector()
 
         return scene
+    
+    
+        
+        
