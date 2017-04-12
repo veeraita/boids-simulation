@@ -3,12 +3,9 @@ Created on Mar 16, 2017
 
 @author: Veera
 '''
-import sys
-import time
-from threading import Thread
 
+import time
 from layout import SimulationLayout
-from start_slider import Slider
 from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QApplication
 
 class BoidsSimulation(QMainWindow):
@@ -28,41 +25,24 @@ class BoidsSimulation(QMainWindow):
         
         self.setCentralWidget(widget)
         
+        self.continue_running = True
+        
+        self.show()
+        
     def moveBoids(self):
         
-        while True:
+        while self.continue_running:
+            
             time.sleep(0.1)
             QApplication.processEvents()
             
             for boid in self.form.boids:
+                boid.changeVelocity(self.form.boids)
                 boid.moveBy(boid.velocity.x(), boid.velocity.y())
                 boid.updatePosVector()
                 
-                 
-def main():
-    
-    app1 = QApplication(sys.argv)
-    slider_window = Slider()
-    slider_window.show()
-    app1.exec_()
-    
-    app2 = QApplication(sys.argv)
-    simulation = BoidsSimulation(slider_window.boids_number) 
-    simulation.show()
-    
-    boids = simulation.form.boids
+    def closeEvent(self, event):
 
-    # Kaynnista saikeet lintujen nopeuden muutoksen laskemiseksi
-    for boid in boids:
-        thread = Thread(target=boid.changeVelocity, args=(boids,))
-        thread.daemon = True
-        thread.start()
-    
-    simulation.moveBoids() # Linnut lentamaan
-    
-    app2.exec_()
-    
-    
-if __name__ == '__main__':
-    
-    sys.exit(main())
+        self.continue_running = False
+        event.accept()
+                

@@ -137,17 +137,17 @@ class Boid(QGraphicsEllipseItem):
         global wa
         global wc
         
-        while True:
-            time.sleep(0.1)
-            #print(self.velocity)
-            v1 = self.separation(boids)
-            v2 = self.alignment(boids)
-            v3 = self.cohesion(boids)
+        #while True:
+        #time.sleep(0.1)
+        #print(self.velocity)
+        v1 = self.separation(boids)
+        v2 = self.alignment(boids)
+        v3 = self.cohesion(boids)
 
-            change = v1*ws + v2*wa + v3*wc
-            self.velocity += change
-            self.bounceWall()
-            self.limitSpeed()
+        change = v1*ws + v2*wa + v3*wc
+        self.velocity += change
+        self.bounceWall()
+        self.limitSpeed()
         
 def get_ws(value):
     global ws
