@@ -24,7 +24,7 @@ class WeightSlider(QWidget):
         
         slider_title = QLabel(self.title)
         self.slider = QSlider(Qt.Horizontal, self)
-        self.slider.setRange(self.default - self.range, self.default + self.range)
+        self.slider.setRange(self.default - self.range, self.default + self.range) #asetetaan mimimi ja maksimi
         self.slider.setValue(self.default)
         
         layout = QVBoxLayout()

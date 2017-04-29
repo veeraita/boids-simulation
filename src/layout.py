@@ -18,14 +18,14 @@ class SimulationLayout(QWidget):
         # Lisataan haluttu maara boid-yksiloita listaan
         for i in range(self.boids_number):
             self.boids.append(Boid())
-        self.__layout()
+        self.buildLayout()
         
         self.ws = DEFAULT_S
         self.wa = DEFAULT_A
         self.wc = DEFAULT_C
         
         
-    def __layout(self):
+    def buildLayout(self):
         
         self.sld1 = WeightSlider('Separation', DEFAULT_S, RANGE_S)
         self.sld1.slider.valueChanged.connect(lambda: get_ws(self.sld1.slider.value()))

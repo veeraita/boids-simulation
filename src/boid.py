@@ -4,7 +4,6 @@ Created on Mar 16, 2017
 @author: Veera
 '''
 import random
-import time
 
 from PyQt5.QtGui import QVector2D, QBrush
 from PyQt5.Qt import QGraphicsEllipseItem
@@ -17,13 +16,14 @@ WALL_FORCE = 10000000
 SCENE_WIDTH = 900.0
 SCENE_HEIGHT = 800.0
 
-DEFAULT_S = 50000
+DEFAULT_S = 40000 #Separation-parametrin alkuarvo
 RANGE_S = 30000
-DEFAULT_A = 350
+DEFAULT_A = 350 #Alignment-parametrin alkuarvo
 RANGE_A = 300
-DEFAULT_C = 30
+DEFAULT_C = 30 #Cohesion-parametrin alkuarvo
 RANGE_C = 25
 
+#painokertoimet globaaleina muuttujina
 ws = DEFAULT_S
 wa = DEFAULT_A
 wc = DEFAULT_C
@@ -45,10 +45,10 @@ class Boid(QGraphicsEllipseItem):
         
         self.speed = random.uniform(5, MAX_SPEED)
         self.velocity = QVector2D(random.uniform(-1,1),random.uniform(-1,1))*self.speed
-        #self.updatePosVector()
        
     def setGraphics(self):
         
+        # Alustetaan lintujen (pisteiden) koko ja paikka ikkunassa
         width = 2*BOID_RADIUS
         height = 2*BOID_RADIUS
         
@@ -101,11 +101,10 @@ class Boid(QGraphicsEllipseItem):
         return separation_vector
     
     def alignment(self, boids):
-        # Lenna samaa nopeutta kuin muu parvi keskimaarin    
-        #lenna samaa nopeutta kuin muu parvi keskimaarin
-        #lasketaan lahella olevien lintujen keskimaarainen nopeus
+        # Lenna samaa nopeutta kuin muu parvi keskimaarin
+
         avg_vel = QVector2D()
-        
+        # Lasketaan lahella olevien lintujen keskimaarainen nopeus
         for boid in boids:
             
             if boid is not self:
@@ -137,9 +136,6 @@ class Boid(QGraphicsEllipseItem):
         global wa
         global wc
         
-        #while True:
-        #time.sleep(0.1)
-        #print(self.velocity)
         v1 = self.separation(boids)
         v2 = self.alignment(boids)
         v3 = self.cohesion(boids)

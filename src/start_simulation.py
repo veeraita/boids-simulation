@@ -14,13 +14,14 @@ class Start(QWidget):
         
         super(Start, self).__init__()
         
+        # Luodaan slider jolla valitaan parven koko
         lcd = QLCDNumber()
         self.sld = QSlider(Qt.Horizontal, self)
         btn = QPushButton('Done', self)
         btn.clicked.connect(self.buttonClicked)
         
         self.sld.valueChanged.connect(lcd.display)
-        self.sld.setRange(5, 70)
+        self.sld.setRange(5, 100)
         
         layout = QVBoxLayout()
         layout.addWidget(lcd)
@@ -39,8 +40,9 @@ class Start(QWidget):
         self.boids_number = self.sld.value()
         self.close()
         
+        # Luodaan simulaatioikkuna jossa oikea maara lintuja
         simulation = BoidsSimulation(self.boids_number)
-        
+
         simulation.moveBoids()
         
 def main():

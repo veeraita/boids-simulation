@@ -3,7 +3,6 @@ Created on Mar 16, 2017
 
 @author: Veera
 '''
-
 import time
 from layout import SimulationLayout
 from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QApplication
@@ -33,10 +32,11 @@ class BoidsSimulation(QMainWindow):
         
         while self.continue_running:
             
-            time.sleep(0.1)
+            time.sleep(0.05)
             QApplication.processEvents()
             
             for boid in self.form.boids:
+                
                 boid.changeVelocity(self.form.boids)
                 boid.moveBy(boid.velocity.x(), boid.velocity.y())
                 boid.updatePosVector()
