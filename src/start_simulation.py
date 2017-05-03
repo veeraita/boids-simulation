@@ -6,7 +6,7 @@ Created on Mar 16, 2017
 from PyQt5.QtWidgets import QWidget, QSlider, QVBoxLayout, QLCDNumber, QPushButton, QApplication
 from PyQt5.QtCore import Qt
 import sys
-from run_simulation import BoidsSimulation
+from mainwindow import BoidsSimulation
 
 class Start(QWidget):
     

@@ -5,9 +5,8 @@ Created on Apr 12, 2017
 '''
 import unittest
 import sys
-from PyQt5.QtTest import QTest
 from PyQt5.QtWidgets import QApplication
-from run_simulation import BoidsSimulation
+from mainwindow import BoidsSimulation
 from boid import *
 
 
