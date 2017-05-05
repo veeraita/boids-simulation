@@ -18,7 +18,7 @@ class Test(unittest.TestCase):
         self.sim = BoidsSimulation(10)
     
     def test_adding_items(self):
-        self.assertEqual(len(self.sim.form.view.items()), 11, "QGraphicsViewin scenen tulisi sis‰lt‰‰ 11 itemi‰: 10 lintua sek‰ rajoittava suorakulmio.")
+        self.assertEqual(len(self.sim.form.view.items()), 11, "QGraphicsViewin scenen tulisi sisaltaa 11 itemia: 10 lintua seka rajoittava suorakulmio.")
            
     def test_defaults(self):
         self.assertEqual(self.sim.form.sld1.slider.value(), DEFAULT_S)
